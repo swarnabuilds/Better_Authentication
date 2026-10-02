@@ -32,6 +32,43 @@ sign in page ---> const { data, error } = await authClient.signUp.email({
 });
 
 useSession and isPending for user session have or not 
+better auth-> integration-> next->next 16+ proxy =====> import { NextRequest, NextResponse } from "next/server";
+import { headers } from "next/headers";
+import { auth } from "@/lib/auth";
+export async function proxy(request: NextRequest) {
+    const session = await auth.api.getSession({
+        headers: await headers()
+    })
+
+    if(!session) {
+        return NextResponse.redirect(new URL("/sign-in", request.url));
+    }
+
+    return NextResponse.next();
+}
+export const config = {
+  matcher: ["/dashboard"], // Specify the routes the middleware applies to
+};
+
+
+
+===================google login==================
+1. google clude console
+2. create Oauth client 
+3. authorized redirect url from better auth----> http://localhost:3000/api/auth/callback/google
+4. google client id and client secret generate 
+5. auth.js ==> socialProviders: {
+        google: { 
+            clientId: process.env.GOOGLE_CLIENT_ID as string, 
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET as string, 
+        }, 
+    },
+
+6. signIn page ==> const signIn = async () => {
+  const data = await authClient.signIn.social({
+    provider: "google",
+  });
+};    
 
 
 
